@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
             jumpsLeft = maxJumps;
         }
 
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             if (jumpsLeft > 0)
             {
