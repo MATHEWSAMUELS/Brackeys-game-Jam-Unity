@@ -174,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    void Respawn()
+    public void Respawn()
     {
         rb.linearVelocity = Vector2.zero;
         transform.position = spawnPoint.position;
