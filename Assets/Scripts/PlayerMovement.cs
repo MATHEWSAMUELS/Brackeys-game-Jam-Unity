@@ -7,36 +7,60 @@ public class PlayerMovement : MonoBehaviour
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public float jumpForce = 15f;
-    
+
     [Header("Jump Settings")]
-    public int maxJumps = 2; 
+    public int maxJumps = 2;
 
     [Header("Dash Stats")]
     public float dashSpeed = 25f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1f;
 
+    [Header("Respawn")]
+    public Transform spawnPoint;
+    public float fallThreshold = -10f;
+
+
+    [Header("Layout References")]
+    public GameObject pastLayout;
+    public GameObject futureLayout;
+
     [Header("References")]
     public Rigidbody2D rb;
     public Transform groundCheck;
     public LayerMask groundLayer;
-
-    [Header("Visuals")]
     public Transform spriteHolder;
 
     private bool isGrounded;
     private float moveInput;
     private float verticalInput;
     private int jumpsLeft;
-    private bool isDashing = false; 
+    private bool isDashing = false;
+    private bool canDash = true;
+
+    private bool isFuture = false;
 
     void Update()
     {
         if (isDashing) return;
 
-        moveInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        // SWITCH LAYOUT
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SwitchLayout();
+        }
 
+        // GET INPUT
+        moveInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        // INVERT CONTROLS IN FUTURE
+        if (isFuture)
+        {
+            moveInput *= -1f;
+        }
+
+        // GROUND CHECK
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
 
         if (isGrounded)
@@ -44,34 +68,44 @@ public class PlayerMovement : MonoBehaviour
             jumpsLeft = maxJumps;
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
+        // JUMP
+        if (Input.GetKeyDown(KeyCode.W) && jumpsLeft > 0)
         {
-            if (jumpsLeft > 0)
-            {
-                Jump();
-                jumpsLeft--;
-            }
+            Jump();
+            jumpsLeft--;
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && canDash) StartCoroutine(PerformDash());
+        // DASH
+        if (Input.GetKeyDown(KeyCode.E) && canDash)
+        {
+            StartCoroutine(PerformDash());
+        }
 
-        // --- FLIPPING CHARACTER ---
+        // FLIP SPRITE
         if (moveInput > 0)
         {
-            if (spriteHolder != null) spriteHolder.localScale = new Vector3(1, 1, 1);
+            if (spriteHolder != null)
+                spriteHolder.localScale = new Vector3(1, 1, 1);
         }
         else if (moveInput < 0)
         {
-            if (spriteHolder != null) spriteHolder.localScale = new Vector3(-1, 1, 1);
+            if (spriteHolder != null)
+                spriteHolder.localScale = new Vector3(-1, 1, 1);
         }
-    }
+
+        //RESPAWM
+        if (transform.position.y < fallThreshold)
+        {
+            Respawn();
+        }
+            }
 
     void FixedUpdate()
     {
         if (isDashing) return;
 
-        // --- NORMAL MOVEMENT ---
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+
         Vector2 targetVelocity = new Vector2(moveInput * currentSpeed, rb.linearVelocity.y);
         rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, 0.15f);
     }
@@ -81,19 +115,21 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
 
-    private bool canDash = true;
     IEnumerator PerformDash()
     {
+        // Only allow dash if pressing A or D
+        if (Mathf.Abs(moveInput) < 0.1f)
+            yield break;
+
         isDashing = true;
         canDash = false;
 
         float originalGravity = rb.gravityScale;
-        rb.gravityScale = 0; 
+        rb.gravityScale = 0;
 
-        Vector2 dashDirection = new Vector2(moveInput, verticalInput);
-        if (dashDirection == Vector2.zero) dashDirection = new Vector3(transform.localScale.x, 0);
-        
-        rb.linearVelocity = dashDirection.normalized * dashSpeed;
+        // Horizontal dash only
+    float dashDirection = Mathf.Sign(spriteHolder.localScale.x);
+        rb.linearVelocity = new Vector2(dashDirection * dashSpeed, 0f);
 
         yield return new WaitForSeconds(dashDuration);
 
@@ -103,4 +139,26 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
+
+
+    void SwitchLayout()
+    {
+        isFuture = !isFuture;
+
+        pastLayout.SetActive(!isFuture);
+        futureLayout.SetActive(isFuture);
+    }
+
+    void Respawn()
+    {
+        rb.linearVelocity = Vector2.zero;
+        transform.position = spawnPoint.position;
+
+        // Reset layout to Past when respawning (optional but recommended)
+        isFuture = false;
+        pastLayout.SetActive(true);
+        futureLayout.SetActive(false);
+    }
+
+
 }
