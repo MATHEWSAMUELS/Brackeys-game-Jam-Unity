@@ -31,6 +31,17 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
     public Transform spriteHolder;
 
+    [Header("Past Settings")]
+    public float pastWalkSpeed = 4f;
+    public float pastRunSpeed = 7f;
+    public float pastGravity = 4f;
+
+    [Header("Future Settings")]
+    public float futureWalkSpeed = 7f;
+    public float futureRunSpeed = 12f;
+    public float futureGravity = 1.5f;
+
+
     private bool isGrounded;
     private float moveInput;
     private float verticalInput;
@@ -39,6 +50,12 @@ public class PlayerMovement : MonoBehaviour
     private bool canDash = true;
 
     private bool isFuture = false;
+
+    void Start()
+    {
+        rb.gravityScale = pastGravity;
+    }
+
 
     void Update()
     {
@@ -104,11 +121,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isDashing) return;
 
-        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+        float currentWalkSpeed = isFuture ? futureWalkSpeed : pastWalkSpeed;
+        float currentRunSpeed = isFuture ? futureRunSpeed : pastRunSpeed;
 
-        Vector2 targetVelocity = new Vector2(moveInput * currentSpeed, rb.linearVelocity.y);
+        float speedToUse = Input.GetKey(KeyCode.LeftShift) ? currentRunSpeed : currentWalkSpeed;
+
+        Vector2 targetVelocity = new Vector2(moveInput * speedToUse, rb.linearVelocity.y);
         rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, 0.15f);
     }
+
 
     void Jump()
     {
@@ -147,7 +168,11 @@ public class PlayerMovement : MonoBehaviour
 
         pastLayout.SetActive(!isFuture);
         futureLayout.SetActive(isFuture);
+
+        // Change gravity
+        rb.gravityScale = isFuture ? futureGravity : pastGravity;
     }
+
 
     void Respawn()
     {
