@@ -1180,13 +1180,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976847035}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.94, y: -0.87, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2.6345801, y: -3.3014898, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1245765903}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1122440093}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &976847039
 BoxCollider2D:
@@ -1249,7 +1249,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 3
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1260,7 +1260,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 2
+  m_Constraints: 4
 --- !u!114 &976847041
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1278,9 +1278,6 @@ MonoBehaviour:
   patrolSpeed: 2
   detectionRange: 20
   stopDistance: 10
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 128
   projectilePrefab: {fileID: 7298900605237604600, guid: 9972dd3ee60937d48b10ad1cecd03a56, type: 3}
   firePoint: {fileID: 1245765903}
   shootCooldown: 1.5
@@ -1332,6 +1329,7 @@ Transform:
   - {fileID: 151410717}
   - {fileID: 205319850}
   - {fileID: 2006898800}
+  - {fileID: 976847037}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1142486967
@@ -2177,7 +2175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2050184857
 Transform:
   m_ObjectHideFlags: 0
@@ -2240,6 +2238,5 @@ SceneRoots:
   - {fileID: 1122440093}
   - {fileID: 2050184857}
   - {fileID: 1151878986}
-  - {fileID: 976847037}
   - {fileID: 74378862}
   - {fileID: 921131357}

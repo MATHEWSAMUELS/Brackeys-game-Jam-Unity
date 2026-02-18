@@ -130,10 +130,10 @@ public class PlayerMovement : MonoBehaviour
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // INVERT CONTROLS IN FUTURE
-        if (isFuture)
-        {
-            moveInput *= -1f;
-        }
+        // if (isFuture)
+        // {
+        //     moveInput *= -1f;
+        // }
 
         // GROUND CHECK
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
