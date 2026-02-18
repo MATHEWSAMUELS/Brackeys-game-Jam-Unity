@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class EnemyProjectile : MonoBehaviour
 {
+    [Header("Projectile Settings")]
     public float speed = 8f;
     public float lifetime = 3f;
+    public float damage = 10f; // Added damage amount
 
     private Vector2 moveDirection;
 
@@ -26,11 +28,16 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            PlayerMovement player = collision.GetComponent<PlayerMovement>();
+            // --- CHANGED: Look for Health component instead of PlayerMovement ---
+            Health playerHealth = collision.GetComponent<Health>();
 
-            if (player != null)
-                player.Respawn();
+            if (playerHealth != null)
+            {
+                // Deal damage to the player
+                playerHealth.TakeDamage(damage);
+            }
 
+            // Destroy the bullet after hitting
             Destroy(gameObject);
         }
     }

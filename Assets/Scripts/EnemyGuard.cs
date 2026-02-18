@@ -32,7 +32,7 @@ public class EnemyGuard : MonoBehaviour
     {
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
-        // Detect Player
+        
         if (distanceToPlayer <= detectionRange)
         {
             isAlerted = true;

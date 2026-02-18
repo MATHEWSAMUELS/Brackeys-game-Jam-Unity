@@ -163,7 +163,7 @@ GameObject:
   - component: {fileID: 151410718}
   m_Layer: 3
   m_Name: Platform1
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -297,7 +297,7 @@ GameObject:
   - component: {fileID: 177097939}
   m_Layer: 3
   m_Name: Platform2
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -431,7 +431,7 @@ GameObject:
   - component: {fileID: 205319851}
   m_Layer: 3
   m_Name: Platform2
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1065,6 +1065,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &927420969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 927420970}
+  m_Layer: 0
+  m_Name: 'PlayerFirepoint '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &927420970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 927420969}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.59, y: 0.04, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1142486971}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &976847035
 GameObject:
   m_ObjectHideFlags: 0
@@ -1078,9 +1109,10 @@ GameObject:
   - component: {fileID: 976847040}
   - component: {fileID: 976847039}
   - component: {fileID: 976847041}
+  - component: {fileID: 976847042}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1252,6 +1284,21 @@ MonoBehaviour:
   projectilePrefab: {fileID: 7298900605237604600, guid: 9972dd3ee60937d48b10ad1cecd03a56, type: 3}
   firePoint: {fileID: 1245765903}
   shootCooldown: 1.5
+--- !u!114 &976847042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 976847035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75119dae9dbd5d84191e4fb61348103e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 500
+  currentHealth: 0
+  invincibilityDuration: 1
 --- !u!1 &1122440092
 GameObject:
   m_ObjectHideFlags: 0
@@ -1300,6 +1347,7 @@ GameObject:
   - component: {fileID: 1142486969}
   - component: {fileID: 1142486968}
   - component: {fileID: 1142486972}
+  - component: {fileID: 1142486973}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1448,6 +1496,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 927420970}
   - {fileID: 1707506963}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1485,7 +1534,38 @@ MonoBehaviour:
   pastGravity: 4
   futureWalkSpeed: 10
   futureRunSpeed: 15
-  futureGravity: 1.5
+  futureGravity: 3
+  playerBulletPrefab: {fileID: 7298900605237604600, guid: 0333d6ca3ea00ab44a8e2d6241848988, type: 3}
+  firePoint: {fileID: 927420970}
+  fireRate: 1.5
+  grenadePrefab: {fileID: 7298900605237604600, guid: 4b200a7f0be6ff343b15c71043f3c9c0, type: 3}
+  throwForce: 10
+  upwardForce: 5
+  grenadeCooldown: 2
+  pulseVisualEffect: {fileID: 0}
+  pulseCooldown: 20
+  pulseRadius: 8
+  pulseForce: 25
+  pulseDamage: 10
+  warpDuration: 5
+  warpCooldown: 20
+  deadEyeSpeedMultiplier: 2
+  rageEnemySpeedMultiplier: 2
+--- !u!114 &1142486973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142486967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75119dae9dbd5d84191e4fb61348103e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 500
+  currentHealth: 0
+  invincibilityDuration: 1
 --- !u!1 &1151878985
 GameObject:
   m_ObjectHideFlags: 0
@@ -1560,9 +1640,9 @@ GameObject:
   - component: {fileID: 1306926928}
   - component: {fileID: 1306926927}
   - component: {fileID: 1306926926}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Weak Platform
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1709,7 +1789,7 @@ GameObject:
   - component: {fileID: 1690398522}
   m_Layer: 3
   m_Name: Platform1
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1961,7 +2041,7 @@ GameObject:
   - component: {fileID: 2011874533}
   m_Layer: 3
   m_Name: Platform0
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
