@@ -1513,7 +1513,7 @@ MonoBehaviour:
   walkSpeed: 15
   runSpeed: 25
   jumpForce: 16
-  maxJumps: 1
+  maxJumps: 0
   dashSpeed: 25
   dashDuration: 0.2
   dashCooldown: 1

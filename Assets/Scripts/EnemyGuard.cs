@@ -17,6 +17,10 @@ public class EnemyGuard : MonoBehaviour
     public Transform firePoint;
     public float shootCooldown = 1.5f;
 
+    [Header("References")] // <--- ADDED THIS SECTION
+    public Animator animator;
+    public Transform spriteHolder;
+
     private Transform player;
     private Rigidbody2D rb;
 
@@ -56,6 +60,16 @@ public class EnemyGuard : MonoBehaviour
 
         rb.linearVelocity = new Vector2(direction * patrolSpeed, rb.linearVelocity.y);
 
+        // --- ANIMATION & FLIP LOGIC ---
+        if (animator != null) animator.SetBool("IsWalking", true);
+        if (spriteHolder != null)
+        {
+            if (direction > 0)
+                spriteHolder.localScale = new Vector3(1, 1, 1);
+            else
+                spriteHolder.localScale = new Vector3(-1, 1, 1);
+        }
+
         if (Mathf.Abs(transform.position.x - target.position.x) < 0.2f)
         {
             movingToB = !movingToB;
@@ -68,10 +82,33 @@ public class EnemyGuard : MonoBehaviour
         {
             float direction = Mathf.Sign(player.position.x - transform.position.x);
             rb.linearVelocity = new Vector2(direction * patrolSpeed, rb.linearVelocity.y);
+
+            // --- ANIMATION & FLIP LOGIC ---
+            if (animator != null) animator.SetBool("IsWalking", true);
+            if (spriteHolder != null)
+            {
+                if (direction > 0)
+                    spriteHolder.localScale = new Vector3(1, 1, 1);
+                else
+                    spriteHolder.localScale = new Vector3(-1, 1, 1);
+            }
         }
         else
         {
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+
+            // --- STOPPED ANIMATION ---
+            if (animator != null) animator.SetBool("IsWalking", false);
+
+            // Make sure the enemy still faces the player even when stopped
+            if (spriteHolder != null)
+            {
+                float direction = Mathf.Sign(player.position.x - transform.position.x);
+                if (direction > 0)
+                    spriteHolder.localScale = new Vector3(1, 1, 1);
+                else
+                    spriteHolder.localScale = new Vector3(-1, 1, 1);
+            }
 
             if (canShoot)
                 StartCoroutine(Shoot());
@@ -81,6 +118,9 @@ public class EnemyGuard : MonoBehaviour
     IEnumerator Shoot()
     {
         canShoot = false;
+        
+        // Optional: Add Shoot Animation here later
+        // if (animator != null) animator.SetBool("IsShooting", true);
 
         GameObject bullet = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
@@ -111,6 +151,9 @@ public class EnemyGuard : MonoBehaviour
 
         // Let gravity pull it down
         rb.gravityScale = 3f;
+
+        // Stop walking animation
+        if (animator != null) animator.SetBool("IsWalking", false);
 
         // Disable shooting and patrol
         StopAllCoroutines();

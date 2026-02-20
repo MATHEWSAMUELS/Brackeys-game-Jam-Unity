@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform groundCheck;
     public LayerMask groundLayer;
     public Transform spriteHolder;
+    public Animator animator;
 
     [Header("Past Settings")]
     public float pastWalkSpeed = 4f;
@@ -82,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private bool canDash = true;
     private bool isFuture = false;
+
 
     void Start()
     {
@@ -137,6 +139,19 @@ public class PlayerMovement : MonoBehaviour
 
         // GROUND CHECK
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+
+        // --- ANIMATION LOGIC ---
+        if (animator != null)
+        {
+            animator.SetBool("IsWalking", moveInput != 0);
+            animator.SetBool("IsRunning", Input.GetKey(KeyCode.LeftShift));
+            
+            // Grounded Logic
+            animator.SetBool("IsGrounded", isGrounded);
+
+            // Falling Logic (Check if Y velocity is negative)
+            animator.SetBool("IsFalling", rb.linearVelocity.y < -0.1f);
+        }
 
         if (isGrounded)
         {
@@ -203,6 +218,21 @@ public class PlayerMovement : MonoBehaviour
 
     void Shoot()
     {
+        Debug.Log("Shoot Method Started!");
+        // --- ANIMATION TRIGGER ---
+        if (animator != null)
+        {
+            Debug.Log("Animator found, setting IsShooting to TRUE");
+            animator.SetBool("IsShooting", true);
+            StartCoroutine(ResetShootAnimationCoroutine());
+        }
+         else 
+        {
+             Debug.LogError("Animator is NULL!"); // <--- If this appears, check the Inspector slot
+        }
+
+
+        // --- BULLET LOGIC ---
         GameObject bullet = Instantiate(playerBulletPrefab, firePoint.position, firePoint.rotation);
         if (spriteHolder.localScale.x < 0)
         {
@@ -373,5 +403,15 @@ public class PlayerMovement : MonoBehaviour
         isFuture = false;
         pastLayout.SetActive(true);
         futureLayout.SetActive(false);
+    }
+
+    // Helper to reset the shoot animation
+    IEnumerator ResetShootAnimationCoroutine()
+    {
+        yield return new WaitForSeconds(0.2f); // Adjust this time to match your animation length
+        if (animator != null)
+        {
+            animator.SetBool("IsShooting", false);
+        }
     }
 }
