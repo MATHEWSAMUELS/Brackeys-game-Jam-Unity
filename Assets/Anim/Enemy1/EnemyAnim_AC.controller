@@ -89,6 +89,7 @@ AnimatorController:
   serializedVersion: 5
   m_AnimatorParameters:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   - m_Name: IsShooting
     m_Type: 4
     m_DefaultFloat: 0
@@ -101,11 +102,16 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
 =======
+=======
+>>>>>>> Stashed changes
   - m_Name: isWalking
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
