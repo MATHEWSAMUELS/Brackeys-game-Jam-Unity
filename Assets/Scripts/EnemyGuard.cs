@@ -40,7 +40,7 @@ public class EnemyGuard : MonoBehaviour
     {
         if (isDead) return;
 
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        float distanceToPlayer = Mathf.Abs(player.position.x - transform.position.x);
 
         if (distanceToPlayer <= detectionRange)
             isAlerted = true;
