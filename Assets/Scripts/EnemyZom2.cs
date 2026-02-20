@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EnemyGuard : MonoBehaviour
+public class EnemyMelee : MonoBehaviour
 {
     [Header("Patrol")]
     public Transform pointA;
@@ -10,13 +10,13 @@ public class EnemyGuard : MonoBehaviour
 
     [Header("Detection")]
     public float detectionRange = 6f;
-    public float stopDistance = 3f;
+    public float attackRange = 1.5f; // How close to get before attacking
+    public float chaseSpeed = 4f;     // How fast to run at the player
 
-    [Header("Shooting")]
-    public GameObject projectilePrefab;
-    public Transform firePoint;
-    public float shootCooldown = 1.5f;
-    public float recoilTime = 0.2f; // <--- NEW: How long the shoot animation lasts
+    [Header("Attack Settings")]
+    public float attackCooldown = 2f;
+    public float attackDuration = 0.3f; // How long the attack animation lasts
+    public int attackDamage = 10;      // Damage to deal (if you have a health script)
 
     [Header("References")]
     public Animator animator;
@@ -27,7 +27,7 @@ public class EnemyGuard : MonoBehaviour
 
     private bool movingToB = true;
     private bool isAlerted = false;
-    private bool canShoot = true;
+    private bool canAttack = true;
     private bool isDead = false;
 
     void Start()
@@ -48,7 +48,7 @@ public class EnemyGuard : MonoBehaviour
             isAlerted = false;
 
         if (isAlerted)
-            HandleAlert(distanceToPlayer);
+            HandleChase(distanceToPlayer);
         else
             Patrol();
     }
@@ -77,12 +77,13 @@ public class EnemyGuard : MonoBehaviour
         }
     }
 
-    void HandleAlert(float distanceToPlayer)
+    void HandleChase(float distanceToPlayer)
     {
-        if (distanceToPlayer > stopDistance)
+        // If we are far away, run towards the player
+        if (distanceToPlayer > attackRange)
         {
             float direction = Mathf.Sign(player.position.x - transform.position.x);
-            rb.linearVelocity = new Vector2(direction * patrolSpeed, rb.linearVelocity.y);
+            rb.linearVelocity = new Vector2(direction * chaseSpeed, rb.linearVelocity.y);
 
             // --- ANIMATION & FLIP LOGIC ---
             if (animator != null) animator.SetBool("IsWalking", true);
@@ -96,6 +97,7 @@ public class EnemyGuard : MonoBehaviour
         }
         else
         {
+            // We are close enough to attack. Stop moving.
             rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
             // --- STOPPED ANIMATION ---
@@ -111,40 +113,41 @@ public class EnemyGuard : MonoBehaviour
                     spriteHolder.localScale = new Vector3(-1, 1, 1);
             }
 
-            if (canShoot)
-                StartCoroutine(Shoot());
+            if (canAttack)
+                StartCoroutine(Attack());
         }
     }
 
-    IEnumerator Shoot()
+    IEnumerator Attack()
     {
-        canShoot = false;
+        canAttack = false;
 
-        // 1. Play Animation
-        if (animator != null) animator.SetBool("IsShooting", true);
+        // 1. Play Attack Animation
+        if (animator != null) animator.SetBool("IsAttacking", true);
 
-        // 2. Spawn Bullet
-        GameObject bullet = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-        Vector2 shootDirection = (player.position - firePoint.position).normalized;
-        bullet.GetComponent<EnemyProjectile>().SetDirection(shootDirection);
+        // 2. DEAL DAMAGE HERE
+        // If your player has a Health script, uncomment the line below:
+        player.GetComponent<Health>().TakeDamage(attackDamage);
 
-        // 3. Wait for Recoil Animation to finish
-        yield return new WaitForSeconds(recoilTime);
+        Debug.Log("Enemy Attacked Player for " + attackDamage + " damage!");
 
-        // 4. Turn off Animation
-        if (animator != null) animator.SetBool("IsShooting", false);
+        // 3. Wait for Attack Animation to finish
+        yield return new WaitForSeconds(attackDuration);
+
+        // 4. Turn off Attack Animation
+        if (animator != null) animator.SetBool("IsAttacking", false);
 
         // 5. Wait for the rest of the cooldown
-        yield return new WaitForSeconds(shootCooldown - recoilTime);
+        yield return new WaitForSeconds(attackCooldown - attackDuration);
 
-        canShoot = true;
+        canAttack = true;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Check if player landed on top
+            // Check if player landed on top (Mario style kill)
             if (collision.contacts[0].normal.y < -0.5f)
             {
                 Die();
@@ -164,7 +167,7 @@ public class EnemyGuard : MonoBehaviour
         // Stop walking animation
         if (animator != null) animator.SetBool("IsWalking", false);
 
-        // Disable shooting and patrol
+        // Disable attacking and patrol
         StopAllCoroutines();
     }
 }

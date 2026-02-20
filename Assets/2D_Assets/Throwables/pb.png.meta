@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 541448fb8bb267349bc04b5a7a8855ce
+guid: 38e102baae5308340b847e3b4982f780
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5267735984250934639
-    second: guardshootsprite_0
-  - first:
-      213: -926018477545940115
-    second: guardshootsprite_1
-  - first:
-      213: -7144614818270133102
-    second: guardshootsprite_2
-  - first:
-      213: -2104252257264538778
-    second: guardshootsprite_3
+      213: 5562011637412046426
+    second: pb_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -60,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 225
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: guardshootsprite_0
+      name: pb_0
       rect:
         serializedVersion: 2
-        x: 169
-        y: 94
-        width: 352
-        height: 492
+        x: 79
+        y: 75
+        width: 82
+        height: 102
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,74 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 19a2e20380e35e6b0800000000000000
-      internalID: -5267735984250934639
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: guardshootsprite_1
-      rect:
-        serializedVersion: 2
-        x: 849
-        y: 94
-        width: 432
-        height: 492
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d6b1d66d91f1623f0800000000000000
-      internalID: -926018477545940115
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: guardshootsprite_2
-      rect:
-        serializedVersion: 2
-        x: 1529
-        y: 94
-        width: 432
-        height: 482
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 29444043daa39dc90800000000000000
-      internalID: -7144614818270133102
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: guardshootsprite_3
-      rect:
-        serializedVersion: 2
-        x: 2209
-        y: 94
-        width: 352
-        height: 492
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 66beee788b13cc2e0800000000000000
-      internalID: -2104252257264538778
+      spriteID: a56a88c8d1c303d40800000000000000
+      internalID: 5562011637412046426
       vertices: []
       indices: 
       edges: []
@@ -222,11 +147,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      guardshootsprite_0: -5267735984250934639
-      guardshootsprite_1: -926018477545940115
-      guardshootsprite_2: -7144614818270133102
-      guardshootsprite_3: -2104252257264538778
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
