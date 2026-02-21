@@ -1,11 +1,12 @@
 using UnityEngine;
+using Ilumisoft.HealthSystem;   // IMPORTANT: use the new health system
 
 public class EnemyProjectile : MonoBehaviour
 {
     [Header("Projectile Settings")]
     public float speed = 8f;
     public float lifetime = 3f;
-    public float damage = 10f; // Added damage amount
+    public float damage = 10f;
 
     private Vector2 moveDirection;
 
@@ -28,16 +29,15 @@ public class EnemyProjectile : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            // --- CHANGED: Look for Health component instead of PlayerMovement ---
-            Health playerHealth = collision.GetComponent<Health>();
+            // NEW HEALTH SYSTEM
+            Ilumisoft.HealthSystem.Health playerHealth =
+                collision.GetComponent<Ilumisoft.HealthSystem.Health>();
 
             if (playerHealth != null)
             {
-                // Deal damage to the player
-                playerHealth.TakeDamage(damage);
+                playerHealth.ApplyDamage(damage);
             }
 
-            // Destroy the bullet after hitting
             Destroy(gameObject);
         }
     }

@@ -4,32 +4,42 @@ using UnityEngine;
 
 public class BackgroundController : MonoBehaviour
 {
-    private float startPos, length;
-    public GameObject cam;
-    public float parallaxEffect; // The speed at which the background should move relative to the camera
+    private float startPosX, startPosY;
+    private float lengthX, lengthY;
+
+    public Transform cam;
+    public float parallaxX = 0.5f;   // Horizontal parallax
+    public float parallaxY = 0.5f;   // Vertical parallax
 
     void Start()
     {
-        startPos = transform.position.x;
-        length = GetComponent<SpriteRenderer>().bounds.size.x;
+        startPosX = transform.position.x;
+        startPosY = transform.position.y;
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+        lengthX = sr.bounds.size.x;
+        lengthY = sr.bounds.size.y;
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
-        // Calculate distance background move based on cam movement
-        float distance = cam.transform.position.x * parallaxEffect; // 0 = move with cam || 1 = won't move || 0.5 = half
-        float movement = cam.transform.position.x * (1 - parallaxEffect);
+        // Calculate parallax movement
+        float distX = cam.position.x * parallaxX;
+        float distY = cam.position.y * parallaxY;
 
-        transform.position = new Vector3(startPos + distance, transform.position.y, transform.position.z);
+        float tempX = cam.position.x * (1 - parallaxX);
+        float tempY = cam.position.y * (1 - parallaxY);
 
-        // if background has reached the end of its length adjust its position for infinite scrolling
-        if (movement > startPos + length)
-        {
-            startPos += length;
-        }
-        else if (movement < startPos - length)
-        {
-            startPos -= length;
-        }
+        // Move background
+        transform.position = new Vector3(startPosX + distX, startPosY + distY, transform.position.z);
+
+        // Infinite scroll on X
+        if (tempX > startPosX + lengthX) startPosX += lengthX;
+        else if (tempX < startPosX - lengthX) startPosX -= lengthX;
+
+        // Infinite scroll on Y
+        if (tempY > startPosY + lengthY) startPosY += lengthY;
+        else if (tempY < startPosY - lengthY) startPosY -= lengthY;
     }
 }

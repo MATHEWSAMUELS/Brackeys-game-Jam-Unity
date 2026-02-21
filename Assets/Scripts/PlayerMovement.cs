@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic; 
+using Ilumisoft.HealthSystem;
+
+
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 15f;
 
     [Header("Jump Settings")]
-    public int maxJumps = 2;
+    public int maxJumps = 1;
 
     [Header("Dash Stats")]
     public float dashSpeed = 25f;
@@ -83,11 +86,16 @@ public class PlayerMovement : MonoBehaviour
     private bool isDashing = false;
     private bool canDash = true;
     private bool isFuture = false;
-
+    private Ilumisoft.HealthSystem.Health playerHealth;
 
     void Start()
     {
         rb.gravityScale = pastGravity;
+
+        // Get the Ilumisoft health component
+        playerHealth = GetComponent<Ilumisoft.HealthSystem.Health>();   
+        // Subscribe to the death event from Ilumisoft system
+        playerHealth.OnHealthEmpty += OnPlayerDeath;
     }
 
     void Update()
@@ -138,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
         // }
 
         // GROUND CHECK
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.35f, groundLayer);
 
         // --- ANIMATION LOGIC ---
         if (animator != null)
@@ -207,6 +215,15 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 targetVelocity = new Vector2(moveInput * speedToUse, rb.linearVelocity.y);
         rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, 0.15f);
+    }
+
+    private void OnPlayerDeath()
+    {
+        // 1. Respawn the player
+        Respawn();
+
+        // 2. Restore full health using SetHealth from Ilumisoft
+        playerHealth.SetHealth(playerHealth.MaxHealth);
     }
 
     void Jump()

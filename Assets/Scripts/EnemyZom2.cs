@@ -119,29 +119,29 @@ public class EnemyMelee : MonoBehaviour
     }
 
     IEnumerator Attack()
-    {
-        canAttack = false;
+        {
+            canAttack = false;
 
-        // 1. Play Attack Animation
-        if (animator != null) animator.SetBool("IsAttacking", true);
+            if (animator != null) animator.SetBool("IsAttacking", true);
 
-        // 2. DEAL DAMAGE HERE
-        // If your player has a Health script, uncomment the line below:
-        player.GetComponent<Health>().TakeDamage(attackDamage);
+            // --- DEAL DAMAGE USING NEW HEALTH SYSTEM ---
+            Ilumisoft.HealthSystem.Health playerHealth = 
+                player.GetComponent<Ilumisoft.HealthSystem.Health>();
 
-        Debug.Log("Enemy Attacked Player for " + attackDamage + " damage!");
+            if (playerHealth != null)
+            {
+                playerHealth.ApplyDamage(attackDamage);
+                Debug.Log("Enemy Melee attacked player for " + attackDamage);
+            }
 
-        // 3. Wait for Attack Animation to finish
-        yield return new WaitForSeconds(attackDuration);
+            yield return new WaitForSeconds(attackDuration);
 
-        // 4. Turn off Attack Animation
-        if (animator != null) animator.SetBool("IsAttacking", false);
+            if (animator != null) animator.SetBool("IsAttacking", false);
 
-        // 5. Wait for the rest of the cooldown
-        yield return new WaitForSeconds(attackCooldown - attackDuration);
+            yield return new WaitForSeconds(attackCooldown - attackDuration);
 
-        canAttack = true;
-    }
+            canAttack = true;
+        }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
