@@ -146,11 +146,9 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("IsWalking", moveInput != 0);
             animator.SetBool("IsRunning", Input.GetKey(KeyCode.LeftShift));
             
-            // Grounded Logic
             animator.SetBool("IsGrounded", isGrounded);
-
-            // Falling Logic (Check if Y velocity is negative)
-            animator.SetBool("IsFalling", rb.linearVelocity.y < -0.1f);
+            animator.SetFloat("VerticalSpeed", rb.linearVelocity.y);
+            animator.SetBool("IsFalling", rb.linearVelocity.y < -0.1f && !isGrounded);
         }
 
         if (isGrounded)
