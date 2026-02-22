@@ -77,6 +77,16 @@ public class PlayerMovement : MonoBehaviour
     public float rageEnemySpeedMultiplier = 2f; 
     private float nextWarpTime = 0f;
     private bool isWarpActive = false;
+
+    [Header("Audio Settings")]
+    public AudioSource playerAudioSource;
+    public AudioClip jumpSound;
+    public AudioClip shootSound;
+
+    [Header("Movement Sound")]
+    public AudioClip movementSound; // Drag your footstep sound here
+    public float stepInterval = 0.5f; // How often to play the sound (in seconds)
+    private float nextStepTime = 0f;  // Timer (don't change this)
    
 
     private bool isGrounded;
@@ -189,6 +199,17 @@ public class PlayerMovement : MonoBehaviour
                 spriteHolder.localScale = new Vector3(-1, 1, 1);
         }
 
+                // --- MOVEMENT SOUND LOGIC ---
+        // Play sound only if grounded, moving, and enough time has passed
+        if (isGrounded && moveInput != 0 && Time.time >= nextStepTime)
+        {
+            if (playerAudioSource != null && movementSound != null)
+            {
+                playerAudioSource.PlayOneShot(movementSound);
+            }
+            nextStepTime = Time.time + stepInterval;
+        }
+        
         //RESPAWM
         if (transform.position.y < fallThreshold)
         {
@@ -229,6 +250,11 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+
+        if (playerAudioSource != null && jumpSound != null)
+        {
+            playerAudioSource.PlayOneShot(jumpSound);
+        }
     }
 
     void Shoot()
@@ -253,6 +279,11 @@ public class PlayerMovement : MonoBehaviour
         {
             bullet.transform.Rotate(0, 180, 0);
         }
+        if (playerAudioSource != null && shootSound != null)
+        {
+            playerAudioSource.PlayOneShot(shootSound);
+        }
+
     }
 
     void ThrowGrenade()

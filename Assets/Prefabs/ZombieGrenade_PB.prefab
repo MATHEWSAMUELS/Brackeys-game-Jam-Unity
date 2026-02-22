@@ -102,6 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed48612901713d84db31e385571ce180, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionSound: {fileID: 8300000, guid: b49110b0d55aab947952126682886f4a, type: 3}
   speed: 5
   arcHeight: 6
   damage: 10

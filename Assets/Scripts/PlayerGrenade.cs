@@ -2,13 +2,17 @@ using UnityEngine;
 
 public class Grenade : MonoBehaviour
 {
+
+    public AudioClip explosionSound;
+
     [Header("Grenade Stats")]
     public float fuseTime = 3f;       
     public float blastRadius = 5f;    
     public float explosionForce = 10f; 
     
     [Header("Damage Settings")]
-    public float explosionDamage = 50f; 
+    public float explosionDamage = 50f;
+     
 
     void Update()
     {
@@ -50,7 +54,24 @@ public class Grenade : MonoBehaviour
                 rb.AddForce(direction.normalized * explosionForce, ForceMode2D.Impulse);
             }
         }
-
+        if (explosionSound != null)
+        {
+          GameObject soundObj = new GameObject("ExplosionSound");
+        
+        // Add an Audio Source component to it
+        AudioSource source = soundObj.AddComponent<AudioSource>();
+        
+        // Configure the Source
+        source.clip = explosionSound;
+        source.spatialBlend = 0.0f; // <--- CRITICAL: 0.0f forces it to be 2D (No volume drop-off)
+        source.volume = 1.0f;       // <--- Set to normal volume
+        
+        // Play the sound
+        source.Play();
+        
+        // Destroy the object after the sound finishes so it doesn't clog memory
+        Destroy(soundObj, explosionSound.length + 0.1f);
+        }
         
         Destroy(gameObject);
     }
