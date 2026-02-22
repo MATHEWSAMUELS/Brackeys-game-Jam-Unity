@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
 
     
     [Header("Pulse Ability Settings")]
-    public GameObject pulseVisualEffect;
+    private GameObject pulseVisualEffect;
     public float pulseCooldown = 180f;
     public float pulseRadius = 8f;
     public float pulseForce = 25f;

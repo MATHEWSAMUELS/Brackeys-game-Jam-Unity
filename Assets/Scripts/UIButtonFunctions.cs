@@ -5,7 +5,7 @@ public class UIButtonFunctions : MonoBehaviour
 {
     public void PlayGame()
     {
-        int level = LevelManager.GetUnlockedLevel();
+        int level = Mathf.Clamp(LevelManager.GetUnlockedLevel(), 1, LevelManager.totalPlayableLevels);
         SceneManager.LoadScene("Level" + level);
     }
 
@@ -26,15 +26,32 @@ public class UIButtonFunctions : MonoBehaviour
 
     public void Replay()
     {
-        Scene current = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(current.name);
+        int level = LevelManager.GetUnlockedLevel();
+
+        // If in WinScreen, replay the previous level
+        if (SceneManager.GetActiveScene().name == "WinScreen")
+            level--;
+
+        // If in Victory, replay final level
+        if (SceneManager.GetActiveScene().name == "Victory")
+            level = LevelManager.totalPlayableLevels;
+
+        SceneManager.LoadScene("Level" + level);
     }
 
     public void Next()
     {
-        int level = int.Parse(SceneManager.GetActiveScene().name.Replace("Level", ""));
-        LevelManager.CompleteLevel(level);
-        LevelManager.LoadLevel(level + 1);
+        int nextLevel = LevelManager.GetUnlockedLevel();
+
+        // If the next level is BEYOND final playable level → go to Victory screen
+        if (nextLevel > LevelManager.totalPlayableLevels)
+        {
+            SceneManager.LoadScene("Victory");
+            return;
+        }
+
+        // Otherwise load the next level normally
+        LevelManager.LoadLevel(nextLevel);
     }
 
     public void BackToMenu()

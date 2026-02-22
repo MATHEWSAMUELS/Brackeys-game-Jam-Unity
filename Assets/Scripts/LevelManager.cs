@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    public static int totalPlayableLevels = 3;
     public static void LoadLevel(int levelIndex)
     {
         SceneManager.LoadScene("Level" + levelIndex);
@@ -10,8 +11,9 @@ public class LevelManager : MonoBehaviour
 
     public static void CompleteLevel(int currentLevel)
     {
-        // unlock next level
-        int nextLevel = currentLevel + 1;
+        // Don’t unlock more than total playable levels
+        int nextLevel = Mathf.Clamp(currentLevel + 1, 1, totalPlayableLevels);
+
         PlayerPrefs.SetInt("CurrentLevel", nextLevel);
     }
 
