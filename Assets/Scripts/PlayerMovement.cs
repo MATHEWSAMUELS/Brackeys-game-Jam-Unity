@@ -2,8 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic; 
 using Ilumisoft.HealthSystem;
-
-
+using UnityEngine.SceneManagement; // Required for Scene Management
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,6 +22,11 @@ public class PlayerMovement : MonoBehaviour
     [Header("Respawn")]
     public Transform spawnPoint;
     public float fallThreshold = -10f;
+
+    // --- NEW: GAME OVER SETTINGS ---
+    [Header("Game Over")]
+    public string loseSceneName = "LoseScene"; // Type the name of your scene file here
+    private bool isDead = false;    // To stop input when dead
 
     [Header("Layout References")]
     public GameObject pastLayout;   
@@ -84,9 +88,9 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip shootSound;
 
     [Header("Movement Sound")]
-    public AudioClip movementSound; // Drag your footstep sound here
-    public float stepInterval = 0.5f; // How often to play the sound (in seconds)
-    private float nextStepTime = 0f;  // Timer (don't change this)
+    public AudioClip movementSound; 
+    public float stepInterval = 0.5f; 
+    private float nextStepTime = 0f;  
    
 
     private bool isGrounded;
@@ -102,14 +106,14 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.gravityScale = pastGravity;
 
-        // Get the Ilumisoft health component
         playerHealth = GetComponent<Ilumisoft.HealthSystem.Health>();   
-        // Subscribe to the death event from Ilumisoft system
         playerHealth.OnHealthEmpty += OnPlayerDeath;
     }
 
     void Update()
     {
+        if (isDead) return; 
+
         if (isDashing) return;
 
         // SWITCH LAYOUT
@@ -148,12 +152,6 @@ public class PlayerMovement : MonoBehaviour
         // GET INPUT
         moveInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-
-        // INVERT CONTROLS IN FUTURE
-        // if (isFuture)
-        // {
-        //     moveInput *= -1f;
-        // }
 
         // GROUND CHECK
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, 0.35f, groundLayer);
@@ -199,8 +197,6 @@ public class PlayerMovement : MonoBehaviour
                 spriteHolder.localScale = new Vector3(-1, 1, 1);
         }
 
-                // --- MOVEMENT SOUND LOGIC ---
-        // Play sound only if grounded, moving, and enough time has passed
         if (isGrounded && moveInput != 0 && Time.time >= nextStepTime)
         {
             if (playerAudioSource != null && movementSound != null)
@@ -210,10 +206,10 @@ public class PlayerMovement : MonoBehaviour
             nextStepTime = Time.time + stepInterval;
         }
         
-        //RESPAWM
+        // --- FALL CHECK (GAME OVER) ---
         if (transform.position.y < fallThreshold)
         {
-            Respawn();
+            GameOver();
         }
     }
 
@@ -238,13 +234,26 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, targetVelocity, 0.15f);
     }
 
+    // --- NEW GAME OVER LOGIC ---
+    void GameOver()
+    {
+        isDead = true;
+        rb.linearVelocity = Vector2.zero; 
+
+        // 1. SAVE the current level name to memory (PlayerPrefs)
+        PlayerPrefs.SetString("PreviousLevel", SceneManager.GetActiveScene().name);
+
+        // 2. Load the Lose Screen
+        if (!string.IsNullOrEmpty(loseSceneName))
+        {
+            SceneManager.LoadScene(loseSceneName);
+        }
+    }
+
     private void OnPlayerDeath()
     {
-        // 1. Respawn the player
-        Respawn();
-
-        // 2. Restore full health using SetHealth from Ilumisoft
-        playerHealth.SetHealth(playerHealth.MaxHealth);
+        // UPDATED: Load the lose screen scene instead of respawning
+        GameOver();
     }
 
     void Jump()
@@ -260,7 +269,6 @@ public class PlayerMovement : MonoBehaviour
     void Shoot()
     {
         Debug.Log("Shoot Method Started!");
-        // --- ANIMATION TRIGGER ---
         if (animator != null)
         {
             Debug.Log("Animator found, setting IsShooting to TRUE");
@@ -269,11 +277,9 @@ public class PlayerMovement : MonoBehaviour
         }
          else 
         {
-             Debug.LogError("Animator is NULL!"); // <--- If this appears, check the Inspector slot
+             Debug.LogError("Animator is NULL!"); 
         }
 
-
-        // --- BULLET LOGIC ---
         GameObject bullet = Instantiate(playerBulletPrefab, firePoint.position, firePoint.rotation);
         if (spriteHolder.localScale.x < 0)
         {
@@ -441,6 +447,7 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = isFuture ? futureGravity : pastGravity;
     }
 
+    // Respawn is kept here but is no longer called by death logic.
     public void Respawn()
     {
         rb.linearVelocity = Vector2.zero;
@@ -451,10 +458,9 @@ public class PlayerMovement : MonoBehaviour
         futureLayout.SetActive(false);
     }
 
-    // Helper to reset the shoot animation
     IEnumerator ResetShootAnimationCoroutine()
     {
-        yield return new WaitForSeconds(0.2f); // Adjust this time to match your animation length
+        yield return new WaitForSeconds(0.2f); 
         if (animator != null)
         {
             animator.SetBool("IsShooting", false);

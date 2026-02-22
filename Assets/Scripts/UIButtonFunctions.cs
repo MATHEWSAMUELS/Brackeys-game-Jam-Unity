@@ -3,10 +3,38 @@ using UnityEngine.SceneManagement;
 
 public class UIButtonFunctions : MonoBehaviour
 {
+    [Header("Audio Settings")]
+    public AudioSource audioSource; // Drag the AudioSource here
+    public AudioClip winSound;       // Drag Win Sound here
+    public AudioClip loseSound;      // Drag Lose Sound here
+
+    void Start()
+    {
+        // Detect which screen we are on and play the appropriate sound
+        string currentScene = SceneManager.GetActiveScene().name;
+
+        // If we are in a Win or Victory scene
+        if (currentScene == "WinScreen" || currentScene == "Victory")
+        {
+            if (audioSource != null && winSound != null)
+            {
+                audioSource.PlayOneShot(winSound);
+            }
+        }
+        // If we are in the Lose/Defeat scene (Matches your previous code)
+        else if (currentScene == "LoseScene" || currentScene == "Defeat")
+        {
+            if (audioSource != null && loseSound != null)
+            {
+                audioSource.PlayOneShot(loseSound);
+            }
+        }
+    }
+
     public void PlayGame()
     {
-        int level = Mathf.Clamp(LevelManager.GetUnlockedLevel(), 1, LevelManager.totalPlayableLevels);
-        SceneManager.LoadScene("Level" + level);
+        // Always start at Level 1
+        SceneManager.LoadScene("Level1"); 
     }
 
     public void OpenLevelSelect()
@@ -28,11 +56,9 @@ public class UIButtonFunctions : MonoBehaviour
     {
         int level = LevelManager.GetUnlockedLevel();
 
-        // If in WinScreen, replay the previous level
         if (SceneManager.GetActiveScene().name == "WinScreen")
             level--;
 
-        // If in Victory, replay final level
         if (SceneManager.GetActiveScene().name == "Victory")
             level = LevelManager.totalPlayableLevels;
 
@@ -43,19 +69,29 @@ public class UIButtonFunctions : MonoBehaviour
     {
         int nextLevel = LevelManager.GetUnlockedLevel();
 
-        // If the next level is BEYOND final playable level → go to Victory screen
         if (nextLevel > LevelManager.totalPlayableLevels)
         {
             SceneManager.LoadScene("Victory");
             return;
         }
 
-        // Otherwise load the next level normally
         LevelManager.LoadLevel(nextLevel);
     }
 
     public void BackToMenu()
     {
         LevelManager.LoadMenu();
+    }
+
+    public void RestartFromDefeat()
+    {
+        string levelName = PlayerPrefs.GetString("PreviousLevel");
+
+        if (string.IsNullOrEmpty(levelName))
+        {
+            levelName = "Level 1";
+        }
+
+        SceneManager.LoadScene(levelName);
     }
 }
